@@ -1,0 +1,149 @@
+<html>
+<head>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+    <script src="/js/jquery-1.11.2.min.js"></script>
+    <script src="/js/jquery-ui.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.6/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/dataTables.bootstrap.css" />
+    <script src="/js/dataTables.bootstrap.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/master.css" />
+    <link rel="stylesheet" type="text/css" href="/css/graph.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootsnips.css" />
+    <link rel="stylesheet" type="text/css" href="/css/featherlight.css" />
+    <script src="/js/bootstrap-select.js" ></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-select.min.css" />
+    <script src="/js/lodash.min.js"></script>
+    <script src="/js/docker.js"></script>
+    <script src="/js/featherlight.js"></script>
+    <script src="/js/gauge.js"></script>
+    <script src="/js/d3.v3.min.js" charset="utf-8"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="http://lipis.github.io/bootstrap-sweetalert/lib/sweet-alert.js"></script>
+    <link rel="stylesheet" href="http://lipis.github.io/bootstrap-sweetalert/lib/sweet-alert.css">
+    
+    <title>Docker Controller</title>
+</head>
+<body>
+    <div class="tabbable-panel">
+        <div class="tabbable-line">
+            <ul class="nav nav-tabs" id="pageNavList">
+                <li class="active" ><a id="showContainers" href="#container_tab" data-toggle="tab">Containers</a></li>
+                <li><a href="#image_tab" id="showImages" data-toggle="tab">Images</a></li>
+            </ul>
+            <div class='tab-content' id="main-content-tabs">
+                <div id="container_tab" class="tab-pane active container-fluid status" >
+                    <table id="container_table" class="table table-bordred table-striped table-hover">
+                        <tbody id="container_list">
+                            
+                        </tbody>
+                    </table>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <button class="btn btn-default btn-lg reloadContainers"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div id="image_tab" class="tab-pane container-fluid status" style="max-height:600px">
+                    <table id="image_table" class="table table-bordred table-striped table-hover">
+                        <tbody id="image_list">
+                            
+                        </tbody>
+                    </table>
+                 </div>
+           </div>
+        </div>
+    </div>
+    <script type='text/template' id="container_buttons">
+                <% if(container.Status.match(/^Up/)){  var stoppedDisplay = "none"; var runningDisplay="inline" }else{ var stoppedDisplay = "inline"; var runningDisplay="none" }%>
+                <span class="stoppedControls" style="display:<%- stoppedDisplay %>">
+                    <button class="btn btn-default btn-sm deleteContainer" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <button class="btn btn-default btn-sm startContainer" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+                </span>
+                <span class="runningControls" style="display:<%- runningDisplay %>">
+                    <button class="btn btn-default btn-sm restartContainer" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-retweet" aria-hidden="true"></span></button>
+                    <button class="btn btn-default btn-sm pauseContainer <%if(container.Status.match(/Paused/)){%>active<%}%>" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
+                    <button class="btn btn-default btn-sm stopContainer" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+                </span>
+                <button class="btn btn-default btn-sm getContainerLogs pull-right" data-container="<%- container.Id %>" data-toggle="modal" data-target="#docker_logs"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>
+    </script>
+    <script type='text/template' id="container_template">
+    <% _.forEach(containers, function(container){ %>
+        <tr id="<%- container.Id %>">
+            <td>
+                <% if(container.Status.match(/^Up/)){  var stoppedDisplay = "none"; var runningDisplay="inline" }else{ var stoppedDisplay = "inline"; var runningDisplay="none" }%>
+                <span class="stoppedControls" style="display:<%- stoppedDisplay %>">
+                    <button class="btn btn-default btn-sm deleteFocus"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <button class="btn btn-default btn-sm startContainer"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+                </span>
+                <span class="runningControls" style="display:<%- runningDisplay %>">
+                    <button class="btn btn-default btn-sm restartContainer"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
+                    <button class="btn btn-default btn-sm deleteFocus"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
+                    <button class="btn btn-default btn-sm stopContainer"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+                </span>
+            </td>
+            <td><%- container.Names[0] %></td>
+            <td><%- container.Image %></td>
+            <td width="400px"><%- container.Command %></td>
+            <td>
+                <ul style="list-style-type: none; padding-left:2px;">
+                    <% _.forEach(container.Ports, function(port){ %>
+                        <li><%- port.PrivatePort %><% if(port.IP){ %>/<%- port.IP %>:<%- port.PublicPort %><% } %></li>
+                    <% }); %>
+                </ul>
+            </td>
+            <td><%- container.Status %></td>
+            <td><%- new Date(container.Created * 1000).toISOString() %></td>
+        </tr>
+    <% }); %>
+    </script>
+    <script type='text/template' id="image_template">
+    <% _.forEach(images, function(image){ %>
+        <tr id="<%- image.id %>">
+            <td>
+            </td>
+            <td><%- image.RepoTags[0] %></td>
+            <td><%- new Date(image.Created * 1000).toISOString() %></td>
+        </tr>
+    <% }); %>
+    </script>
+    
+    <div class="modal fade" id="docker_logs" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="log_controls modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="btn-group col-md-5" data-toggle="buttons">
+                                <label class="btn btn-info active">
+                                        <input type="checkbox" autocomplete="off" checked>
+                                        STDOUT
+                                </label>
+                                <label class="btn btn-warning">
+                                        <input type="checkbox" autocomplete="off">
+                                        STDERR
+                                </label>
+                            </div>
+                            <div class="input-group col-md-3" data-toggle="buttons">
+                                <input type="number" class="form-control log_lines" value=20 id="log_lines">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body container-fluid">
+                    <div class="well well-lg row" style="overflow:auto;min-height:300px; max-height: 650px">
+                        <ul id="logs_output" class="list-unstyled col-md-12"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

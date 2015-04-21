@@ -1,0 +1,77 @@
+#container_table thead tr,#image_table thead tr {
+	visibility: hidden;
+}
+
+.hidden {
+	display:none;
+}
+
+#add_group_div div {
+	margin-top:3px;
+}
+
+#add_group_div label {
+	width: 150px;
+	float: left;
+}
+#add_focus_div div {
+	margin-top:3px;
+}
+
+#add_focus_div label {
+	width: 150px;
+	float: left;
+}
+select {
+      width: 200px;
+    }
+.parameter-list label {
+	width: 90px;
+	float: left;
+}
+.parameter-list li {
+	height:30px;
+	border-bottom:thin black solid;
+}
+
+.parameter-list li:last-child {
+	border-bottom:none;
+}
+
+ul.group-list {
+	list-style-type: none;
+	-webkit-padding-start: 0px;
+}
+
+ul.parameter-list {
+	list-style-type: none;
+	-webkit-padding-start: 0px;
+}
+
+body .ui-button-text-only .ui-button-text {
+	padding: .4em .4em;
+}
+
+#timelineModal .modal-content {
+	width: 870px;
+}
+#timelineModal .modal-body {
+	width:870px;
+	height: 480px;
+}
+#focusTimeline {
+	width:870px;
+	padding:0px;
+	height:390px;
+	margin-left: 30px;
+}
+.btn-checkbox span.glyphicon {    			
+	opacity: 0;				
+}
+.btn-checkbox.active span.glyphicon {				
+	opacity: 1;				
+}
+
+#logs_output li {
+	white-space:nowrap;
+}

@@ -1,0 +1,207 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: sans-serif;
+	padding: 0px;
+	margin: 0px;
+}
+
+#log_controls {
+	height: 3%;
+	width: 100%;
+	position: absolute;
+	bottom: 25%;
+	border-top: solid #333 1px;
+	padding: 4px 5px;
+}
+
+#log_controls button.type {
+	border-radius: 4px;
+	border: solid 1px #aaa;
+	background-color: white;
+	outline: none;
+}
+
+#log_controls button.type.selected {
+	background-color: #777;
+	color: white;
+}
+
+#log_controls button.clear {
+	position: absolute;
+	right: 4px;
+	outline: none;
+}
+
+.details-subtable {
+	border: thin black groove;
+}
+
+.deleted {
+	background-color:red;
+}
+
+#log {
+	font-family: monospace;
+	position: absolute;
+	width: 100%;
+	height: 25%;
+	bottom: 0px;
+	border-top: solid #bbb 1px;
+	margin: 0px;
+	padding-left: 0px;
+	overflow: auto;
+
+}
+
+form.delete {
+	margin: 0;
+}
+
+#log li {
+	list-style: none;
+	margin-left: 0px;
+	white-space: nowrap;
+	padding: 2px 4px;
+}
+
+#log li:nth-child(even) {
+	background: #f6f6f6;
+}
+
+#cpu_usage {
+	position: absolute;
+	height: 72%;
+	width: 5%;
+	right: 0px;
+	border-left: solid #333 1px;
+	text-align: center;
+}
+
+#percent {
+	position: absolute;
+	bottom: 0px;
+	font-size: 12px;
+	width: 100%;
+}
+
+#bar {
+	position: absolute;
+	width: 80%;
+	background-color: #C8D4F7;
+	bottom: 0px;
+	left: 10%;
+}
+
+#add_focus_form {
+	display: none;
+	width: 35%;
+	position: absolute;
+	top: 4px;
+	right: 6%;
+	background-color: rgba(10, 10, 10, .90);
+	z-index: 100;
+	color: white;
+	padding: 16px;
+}
+
+#add_focus_form label {
+	display: inline-block;
+	white-space: pre; 
+	width: 40%;
+}
+
+#add_focus_form div {
+	margin: 6px 0;
+}
+
+#add_focus_form .type_fields {
+	display: none;
+}
+
+#add_focus_form fieldset {
+	margin-bottom: 1em;
+}
+
+#add_form_buttons {
+	text-align: right;
+}
+
+#add_focus {
+	position: absolute;
+	top: 2px;
+	right: 6%;
+	z-index: 100;
+}
+
+
+#status {
+	max-height: 72%;
+	overflow: auto;
+	width: 95%;
+	margin-right: 66px;
+	position: relative;
+}
+
+#status table {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: 13px;
+}
+
+#status th {
+	text-align: left;
+	border-bottom: solid #bbb 1px;
+}
+
+#status tr:nth-child(even) {
+	background: #f6f6f6;
+}
+
+#status td, th {
+	margin: 0px;
+	padding: 5px 10px;
+}
+
+#status td {
+	font-family: monospace;
+}
+
+#status .updated, #status .updated:nth-child(even) {
+	animation-timing-function: ease-out;
+	animation-duration: 0.5s;
+	
+	-webkit-animation-timing-function: ease-out;
+	-webkit-animation-duration: 0.5s;
+}
+
+#status .updated {
+	animation-name: updater-odd;
+	-webkit-animation-name: updater-odd;
+}
+
+@-webkit-keyframes updater-odd {
+	from { background: #eee; }
+	to  { background: #fff; }
+}
+@keyframes updater-odd {
+	0% { background: #eee; }
+	100% { background: #fff; }
+}
+
+#status .updated:nth-child(even) {
+	animation-name: updater-even;
+	-webkit-animation-name: updater-even;
+}
+
+@-webkit-keyframes updater-even {
+	from { background: #eee; }
+	to  { background: #f6f6f6; }
+}
+@keyframes updater-even {
+	0% { background: #eee; }
+	100% { background: #f6f6f6; }
+}
+

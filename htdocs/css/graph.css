@@ -1,0 +1,137 @@
+path{
+	stroke: black;
+	stroke-width: 1.5;
+	fill: none;
+}
+path.path0{
+	stroke: red;
+	stroke-width: 1;
+	fill: none;
+}
+path.path1{
+	stroke: green;
+	stroke-width: 1;
+	fill: none;
+}
+path.path2{
+	stroke: blue;
+	stroke-width: 1;
+	fill: none;
+}
+path.path3{
+	stroke: DarkSlateGray ;
+	stroke-width: 1;
+	fill: none;
+}
+path.path4{
+	stroke: orange;
+	stroke-width: 1;
+	fill: none;
+}
+path.path5{
+	stroke: purple;
+	stroke-width: 1;
+	fill: none;
+}
+path.path6{
+	stroke: gold;
+	stroke-width: 1;
+	fill: none;
+}
+path.path7{
+	stroke: indigo;
+	stroke-width: 1;
+	fill: none;
+}
+path.path8{
+	stroke: maroon;
+	stroke-width: 1;
+	fill: none;
+}
+path.path9{
+	stroke: navy;
+	stroke-width: 1;
+	fill: none;
+}
+.label.series0Legend {
+	background-color: red;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series1Legend {
+	background-color: green;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series2Legend {
+	background-color: blue;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series3Legend {
+	background-color: DarkSlateGray ;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series4Legend {
+	background-color: orange;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series5Legend {
+	background-color: purple;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series6Legend {
+	background-color: gold;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series7Legend {
+	background-color: indigo;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series8Legend {
+	background-color: maroon;
+	margin:4px;
+	cursor: pointer;
+}
+.label.series9Legend {
+	background-color: navy;
+	margin:4px;
+	cursor: pointer;
+}
+
+path.area {
+	stroke: LightSteelBlue;
+	stroke-width: 1;
+	fill: LightSteelBlue ;
+}
+
+line.median {
+	stroke: red;
+	stroke-width: 1;
+	fill: none;
+}
+
+line.mean {
+	stroke: green;
+	stroke-width: 1;
+	fill: none;
+}
+
+.axis {
+  shape-rendering: crispEdges;
+}
+
+.y.axis line, .y.axis path {
+  stroke: #000;
+  opacity: .5;
+  stroke-opacity: .5;
+}
+.x.axis line, .x.axis path {
+  stroke: #000;
+  stroke-opacity: .5;
+}

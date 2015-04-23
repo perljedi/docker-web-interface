@@ -207,18 +207,30 @@ $(document).ready(function(){
 		openLogSocket: function(event){
 			var id = $(event.relatedTarget).data('container');
 			$("#logs_output").empty();
-			$.getJSON("/dockerapi/container/"+id+"/follow", function(res){
-				docker.openWebSocket = new ReconnectingWebSocket('ws://' + location.hostname + ':' + res.port + '/');
-				docker.openWebSocket.onmessage = function (event) {
-					_.forEach(_.trim(event.data).split(/\n/), function(line){
-						$("#logs_output").prepend("<li>"+line+"</li>");
-					});
-					var max_lines = $("#log_lines").val()
-					while($("#logs_output li").size() > max_lines){
-						$("#logs_output li:last").remove();
-					}
+			docker.openWebSocket = new ReconnectingWebSocket('ws://' + location.hostname + ':9123/');
+			docker.openWebSocket.onopen = function(){
+				docker.openWebSocket.send(id);
+			};
+			docker.openWebSocket.onmessage = function (event) {
+				var data = JSON.parse(event.data);
+				_.forEach(_.trim(data.data).split(/\n/), function(line){
+					$("#logs_output").prepend("<li>"+line+"</li>");
+				});
+				var max_lines = $("#log_lines").val()
+				while($("#logs_output li").size() > max_lines){
+					$("#logs_output li:last").remove();
 				}
-			});
+			}
+		},
+		manualOpenSocket: function(id){
+			docker.openWebSocket = new ReconnectingWebSocket('ws://' + location.hostname + ':9123/');
+			docker.openWebSocket.onopen = function(){
+				docker.openWebSocket.send(id);
+			};
+			docker.openWebSocket.onmessage = function (event) {
+				var data = JSON.parse(event.data);
+				console.log(data);
+			}
 		}
 	});
 	docker.getContainers();
@@ -247,7 +259,7 @@ function ReconnectingWebSocket(url, protocols) {
 		// These can be altered by calling code.
 		this.debug = false;
 		this.reconnectInterval = 1000;
-		this.timeoutInterval = 2000;
+		this.timeoutInterval = 20000;
 	    
 		var self = this;
 		var ws;

@@ -34,13 +34,14 @@ $(document).ready(function(){
 				    {data:{"_":"Status"}, "title":"Status"},
 				    {data:{"_":"Created"}, "title":"Created"}
 			    ],
-			    "dom":"<'row'<'col-sm-1'l><'col-sm-2'<'#filterOption'>><'col-sm-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+			    "dom":"<'row'<'col-sm-1'l><'col-sm-2'<'#filterOption'>><'col-sm-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-3'i><'col-sm-3'<'#refreshButton'>><'col-sm-6'p>>",
 			    "order":[],
 			    "scrollY": (dh - $ct.offset().top - 180)+"px",
 			    "scrollCollapse": true,
 			    //data:res
 		    });
 		    $("#filterOption").html('<div class="form-horizontal funkyradio"><div class="funkyradio-default"><input type="checkbox" name="checkbox" id="showAllContainers" checked/><label for="showAllContainers">Show All</label></div></div>')
+		    $("#refreshButton").html('<button class="btn btn-default btn-lg reloadContainers"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh</button>')
 		    docker.containerDatatable = table.api();
 		    //docker.containerTable = new $.fn.dataTable.Api( "#container_table" );
 		},

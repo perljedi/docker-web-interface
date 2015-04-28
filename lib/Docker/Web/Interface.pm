@@ -133,7 +133,7 @@ sub _build_router {
     return $router;
 }
 
-sub start_websocket {
+sub _start_websocket {
     my $self = shift;
     my $server = AnyEvent::WebSocket::Server->new;
     $self->web_socket(tcp_server('0.0.0.0', 9123, sub {

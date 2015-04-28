@@ -6,7 +6,7 @@ $(document).ready(function(){
 		    var $ct = $("#main-content-tabs .tab-pane.active");
 		    $ct.css("max-height", 10);
 		    var dh = $(document).height();
-		    $ct.css("max-height", dh - $ct.offset().top - 44);
+		    $ct.css("max-height", dh - $ct.offset().top - 55);
 		    var buttonTemplate = _.template($("#container_buttons").html());
 		    var table = $("#container_table").dataTable({
 			    "initComplete": function () {
@@ -18,7 +18,7 @@ $(document).ready(function(){
 				    {"targets":0, "orderable":false}
 			    ],
 			    "columns":[
-				    {data:"Id",render:function(data, type, row, meta){return buttonTemplate({container:row})}, width:"150px", "title":""},
+				    {data:"Id",render:function(data, type, row, meta){return buttonTemplate({container:row})}, width:"175px", "title":""},
 				    {data:{"_":"Names.0"}, "title":"Name"},
 				    {data:{"_":"Image"}, "title":"Image"},
 				    {data:{"_":"Command"}, "title":"Command"},
@@ -36,7 +36,7 @@ $(document).ready(function(){
 			    ],
 			    "dom":"<'row'<'col-sm-1'l><'col-sm-2'<'#filterOption'>><'col-sm-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
 			    "order":[],
-			    "scrollY":        (dh - $ct.offset().top - 133)+"px",
+			    "scrollY": (dh - $ct.offset().top - 180)+"px",
 			    "scrollCollapse": true,
 			    //data:res
 		    });
@@ -164,7 +164,6 @@ $(document).ready(function(){
 		restartContainer: function(){
 		    var row = $(this).closest("tr"); 
 		    var id = $(this).data("container");
-		    id = '33ffc6dddbdd';
 		    console.log(id);
 		    $.ajax({
 			    type: "POST",
@@ -231,6 +230,38 @@ $(document).ready(function(){
 				var data = JSON.parse(event.data);
 				console.log(data);
 			}
+		},
+		inspectContainer: function(event){
+			var id = $(event.relatedTarget).data('container');
+			$.ajax({
+				type: "GET",
+				url:"/dockerapi/container/"+id,
+				data: {},
+				success: function(res){
+					console.log(res);
+					var template = _.template($("#inspectContainerTempalte").html());
+					$("#inspect_ouput").html(template(res));
+				},
+				complete: function(xhr, status){
+					console.log(status);
+				}
+			});
+		},
+		containerTopProcesses: function(event){
+			var id = $(event.relatedTarget).data('container');
+			$.ajax({
+				type: "GET",
+				url:"/dockerapi/container/"+id+"/top",
+				data: {},
+				success: function(res){
+					console.log(res);
+					var template = _.template($("#containerProcessesTemplate").html());
+					$("#proccess_list").html(template(res));
+				},
+				complete: function(xhr, status){
+					console.log(status);
+				}
+			});
 		}
 	});
 	docker.getContainers();
@@ -241,15 +272,14 @@ $(document).ready(function(){
 	$(document).on("click", ".pauseContainer:not(.active)", docker.pauseContainer);
 	$(document).on("click", ".pauseContainer.active", docker.unpauseContainer);
 	$(document).on("click", ".deleteContainer", docker.confirmDeleteContainer);
-	$("#docker_logs").on("hide.bs.modal", function(){docker.openWebSocket.close()});
-	$("#docker_logs").on("show.bs.modal", docker.openLogSocket);
-	//$(".logs_lines").on("change", docker.getContainerLogs);
-	//$(document).on("click", ".getContainerLogs", docker.getContainerLogs);
+	$("#container_logs").on("hide.bs.modal", function(){docker.openWebSocket.close()});
+	$("#container_logs").on("show.bs.modal", docker.openLogSocket);
+	$("#inspect_container").on("show.bs.modal", docker.inspectContainer);
+	$("#container_top").on("show.bs.modal", docker.containerTopProcesses);
 	$(document).on("click", ".reloadContainers", docker.reloadContainers);
 	$("#showAllContainers").on("change", docker.toggleAllContainers);
 	$("#showContainers").on("show.bs.tab", function(){docker.reloadContainers();});
 	$("#showImages").on("show.bs.tab", function(){docker.showImageTab();});
-	$("#includeDeletedFoci").prop("checked", false);
 });
 
 

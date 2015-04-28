@@ -66,41 +66,27 @@
                     <button class="btn btn-default btn-sm startContainer" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
                 </span>
                 <span class="runningControls" style="display:<%- runningDisplay %>">
-                    <button class="btn btn-default btn-sm restartContainer" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-retweet" aria-hidden="true"></span></button>
+                    <button class="btn btn-default btn-sm restartContainer" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
                     <button class="btn btn-default btn-sm pauseContainer <%if(container.Status.match(/Paused/)){%>active<%}%>" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
                     <button class="btn btn-default btn-sm stopContainer" data-container="<%- container.Id %>"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
                 </span>
-                <button class="btn btn-default btn-sm getContainerLogs pull-right" data-container="<%- container.Id %>" data-toggle="modal" data-target="#docker_logs"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>
-    </script>
-    <script type='text/template' id="container_template">
-    <% _.forEach(containers, function(container){ %>
-        <tr id="<%- container.Id %>">
-            <td>
-                <% if(container.Status.match(/^Up/)){  var stoppedDisplay = "none"; var runningDisplay="inline" }else{ var stoppedDisplay = "inline"; var runningDisplay="none" }%>
-                <span class="stoppedControls" style="display:<%- stoppedDisplay %>">
-                    <button class="btn btn-default btn-sm deleteFocus"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                    <button class="btn btn-default btn-sm startContainer"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
-                </span>
-                <span class="runningControls" style="display:<%- runningDisplay %>">
-                    <button class="btn btn-default btn-sm restartContainer"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
-                    <button class="btn btn-default btn-sm deleteFocus"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
-                    <button class="btn btn-default btn-sm stopContainer"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
-                </span>
-            </td>
-            <td><%- container.Names[0] %></td>
-            <td><%- container.Image %></td>
-            <td width="400px"><%- container.Command %></td>
-            <td>
-                <ul style="list-style-type: none; padding-left:2px;">
-                    <% _.forEach(container.Ports, function(port){ %>
-                        <li><%- port.PrivatePort %><% if(port.IP){ %>/<%- port.IP %>:<%- port.PublicPort %><% } %></li>
-                    <% }); %>
-                </ul>
-            </td>
-            <td><%- container.Status %></td>
-            <td><%- new Date(container.Created * 1000).toISOString() %></td>
-        </tr>
-    <% }); %>
+                <div class="btn-group pull-right">
+                    <button class="btn btn-default btn-sm getContainerLogs" data-container="<%- container.Id %>" data-toggle="modal" data-target="#container_logs"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a role="menuitem" data-container="<%- container.Id %>" data-toggle="modal" data-target="#inspect_container">
+                                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Inspect
+                            </a>
+                        </li>
+                        <li>
+                            <a role="menuitem" data-container="<%- container.Id %>" data-toggle="modal" data-target="#container_top">
+                                <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Top
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
     </script>
     <script type='text/template' id="image_template">
     <% _.forEach(images, function(image){ %>
@@ -112,8 +98,60 @@
         </tr>
     <% }); %>
     </script>
+    <script type='text/template' id="containerProcessesTemplate">
+        <thead>
+            <tr>
+                <% _.forEach(Titles, function(title){ %>
+                    <th><%- title %></th>
+                <% }); %>
+            </tr>
+        </thead>
+        <tbody>
+            <% _.forEach(Processes, function(proccess){ %>
+                <tr>
+                    <% _.forEach(proccess, function(field){ %>
+                        <td>
+                            <%- field %>
+                        </td>
+                    <% }); %>
+                </tr>
+            <% }); %>
+        </tbody>
+    </script>
+    <script type='text/template' id="inspectContainerTempalte">
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-8 well well-sm">
+                <%- Name %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">ID</label>
+            <div class="col-sm-8 well well-sm">
+                <%- Id %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Image</label>
+            <div class="col-sm-8 well well-sm">
+                <%- Config.Image %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Created</label>
+            <div class="col-sm-8 well well-sm">
+                <%- Created %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">IP Address</label>
+            <div class="col-sm-8 well well-sm">
+                <%- NetworkSettings.IPAddress %>
+            </div>
+        </div>
+    </script>
     
-    <div class="modal fade" id="docker_logs" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="container_logs" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="log_controls modal-header">
@@ -137,9 +175,41 @@
                     </div>
                 </div>
                 <div class="modal-body container-fluid">
-                    <div class="well well-lg row" style="overflow:auto;min-height:300px; max-height: 650px">
+                    <div class="well well-sm row" style="overflow:auto;min-height:300px; max-height: 650px">
                         <ul id="logs_output" class="list-unstyled col-md-12"></ul>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="inspect_container" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="log_controls modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Inspect Container</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="inspect_ouput" class="form-horizontal"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="container_top" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="log_controls modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Container Top Processes</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover table-condensed" id="proccess_list"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

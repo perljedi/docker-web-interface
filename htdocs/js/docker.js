@@ -32,8 +32,9 @@ $(document).ready(function(){
 					    }).join("<br />")
 				    }, "title":"Ports"},
 				    {data:{"_":"Status"}, "title":"Status"},
-				    {data:{"_":"Created"}, "title":"Created"}
+				    {data:{"_":"Created"}, "title":"Created"},
 			    ],
+			    "pageLength": 25,
 			    "dom":"<'row'<'col-sm-1'l><'col-sm-2'<'#filterOption'>><'col-sm-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-3'i><'col-sm-3'<'#refreshButton'>><'col-sm-6'p>>",
 			    "order":[],
 			    "scrollY": (dh - $ct.offset().top - 180)+"px",

@@ -221,7 +221,7 @@ sub open_log_stream {
 		},
 		on_read => sub {
 		    my $data = $_[0]->rbuf;
-		    $data =~ s/[^[:graph:] ]//g;
+		    $data =~ s/[^[:graph:] \n]//g;
 		    $_[0]->rbuf = "";
 		    $_->send($self->json->encode({contianer=>$container_id, data=>$data."\n"})) for @{$self->socket_subscriptions->{$container_id}};
 		},

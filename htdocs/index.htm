@@ -147,34 +147,105 @@
         </div>
     </script>
     <script type='text/template' id="inspectImageTempalte">
-        <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">ID</label>
-            <div class="col-sm-8 well well-sm">
-                <%- Id %>
+        <ul class="nav nav-tabs" id="imageInspectNav">
+            <li class="active" ><a id="showContainers" href="#image_meta" data-toggle="tab" aria-controls="home" role="tab" >Metadata</a></li>
+            <li><a href="#image_config" data-toggle="tab" aria-controls="home" role="tab">Config</a></li>
+            <li><a href="#container_config" data-toggle="tab" aria-controls="home" role="tab">Container Config</a></li>
+        </ul>
+        <div class='tab-content' id="image-content-tabs">
+            <div id="image_meta" class="tab-pane active" >
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">ID</label>
+                    <div class="col-sm-8 well well-sm">
+                        <%- Id %>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Author</label>
+                    <div class="col-sm-8 well well-sm">
+                        <%- Author %>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">OS</label>
+                    <div class="col-sm-8 well well-sm">
+                        <%- Os %>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Architecture</label>
+                    <div class="col-sm-8 well well-sm">
+                        <%- Architecture %>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">DockerVersion</label>
+                    <div class="col-sm-8 well well-sm">
+                        <%- DockerVersion %>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">Author</label>
-            <div class="col-sm-8 well well-sm">
-                <%- Author %>
+            <div id="image_config" class="tab-pane" >
+                <% _.forIn(Config, function(value, key){
+                    if(_.isString(value)){
+                        if(value.length > 0) {%>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-2 control-label"><%- key %></label>
+                                <div class="col-sm-8 well well-sm">
+                                    <%- value %>
+                                </div>
+                            </div>
+                    <%  }
+                    }
+                    else if(_.isArray(value)) {
+                        if(value.length > 0) { %>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-2 control-label"><%- key %></label>
+                                    <ul class="col-sm-8 well well-sm list-unstyled">
+                                        <% _.forEach(value, function(item){ %><li><%- item %></li><% }); %>
+                                    </ul>
+                            </div>
+                    <%  }
+                    }
+                    else if(_.isBoolean(value)) { %>
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label"><%- key %></label>
+                                <% if(value) { %><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><% } else { %> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <% } %>
+                        </div>
+                        
+                  <%}
+                }); %>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">OS</label>
-            <div class="col-sm-8 well well-sm">
-                <%- Os %>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">Architecture</label>
-            <div class="col-sm-8 well well-sm">
-                <%- Architecture %>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">DockerVersion</label>
-            <div class="col-sm-8 well well-sm">
-                <%- DockerVersion %>
+            <div id="container_config" class="tab-pane" >
+                <% _.forIn(ContainerConfig, function(value, key){
+                    if(_.isString(value)){
+                        if(value.length > 0) {%>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-2 control-label"><%- key %></label>
+                                <div class="col-sm-8 well well-sm">
+                                    <%- value %>
+                                </div>
+                            </div>
+                    <%  }
+                    }
+                    else if(_.isArray(value)) {
+                        if(value.length > 0) { %>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-2 control-label"><%- key %></label>
+                                    <ul class="col-sm-8 well well-sm list-unstyled">
+                                        <% _.forEach(value, function(item){ %><li><%- item %></li><% }); %>
+                                    </ul>
+                            </div>
+                    <%  }
+                    }
+                    else if(_.isBoolean(value)) { %>
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label"><%- key %></label>
+                                <% if(value) { %><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><% } else { %> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <% } %>
+                        </div>
+                        
+                  <%}
+                }); %>
             </div>
         </div>
     </script>

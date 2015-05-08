@@ -14,7 +14,7 @@ $(document).ready(function(){
 			    },
 			    "ajax":{url:"/dockerapi/containers/all", "dataSrc": ""},
 			    "columnDefs":[
-				    {"targets":["unixDate"], render:function(data, type, row, meta){return new Date(data * 1000).toISOString()}},
+				    {"targets":6, render:function(data, type, row, meta){return new Date(data * 1000).toISOString()}},
 				    {"targets":0, "orderable":false}
 			    ],
 			    "columns":[

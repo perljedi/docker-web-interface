@@ -71,14 +71,16 @@ $(document).ready(function(){
 		    $ct.css("max-height", 10);
 		    var dh = $(document).height();
 		    $ct.css("max-height", dh - $ct.offset().top - 28);
+		    var buttonTemplate = _.template($("#image_buttons").html());
 		    var table = $("#image_table").dataTable({
 			    "ajax":{url:"/dockerapi/images", "dataSrc": ""},
 			    "columnDefs":[
-				    {"targets":["unixDate"], render:function(data, type, row, meta){return new Date(data * 1000).toISOString()}},
+				    {"targets":2, render:function(data, type, row, meta){return new Date(data * 1000).toISOString()}},
+				    {"targets":1, render:function(data, type, row, meta){return data.replace(/<none>/g, "none")}},
 				    {"targets":0, "orderable":false}
 			    ],
 			    "columns":[
-				    {data:null,defaultContent:"",width:"10px", "title":""},
+				    {data:null,render:function(data, type, row, meta){return buttonTemplate({image:row})}, width:"25px", "title":""},
 				    {data:{"_":"RepoTags.0"}, "title":"Name"},
 				    {data:{"_":"Created"}, "title":"Created"}
 			    ],
@@ -320,6 +322,29 @@ $(document).ready(function(){
 				  });
 				}
 			});
+		},
+		inspectImage: function(event){
+			var id = $(event.relatedTarget).data('image');
+			$.ajax({
+				type: "GET",
+				url:"/dockerapi/image/"+id,
+				data: {},
+				success: function(res){
+					console.log(res);
+					var template = _.template($("#inspectImageTempalte").html());
+					$("#inspect_image_ouput").html(template(res));
+				},
+				complete: function(xhr, status){
+					console.log(status);
+				},
+				error: function(xhr, status, message){
+				    swal({
+					title: "Ohh's No!",
+					text: xhr.responseText,
+					type: "error",
+				  });
+				}
+			});
 		}
 	});
 	docker.getContainers();
@@ -333,6 +358,7 @@ $(document).ready(function(){
 	$("#container_logs").on("hide.bs.modal", function(){docker.openWebSocket.close()});
 	$("#container_logs").on("show.bs.modal", docker.openLogSocket);
 	$("#inspect_container").on("show.bs.modal", docker.inspectContainer);
+	$("#inspect_image").on("show.bs.modal", docker.inspectImage);
 	$("#container_top").on("show.bs.modal", docker.containerTopProcesses);
 	$(document).on("click", ".reloadContainers", docker.reloadContainers);
 	$("#showAllContainers").on("change", docker.toggleAllContainers);

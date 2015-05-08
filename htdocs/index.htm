@@ -81,6 +81,9 @@
                 </div>
                 
     </script>
+    <script type='text/template' id="image_buttons">
+        <button class="btn btn-default btn-sm inspectImage" data-image="<%- image.Id %>" data-toggle="modal" data-target="#inspect_image"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></button>
+    </script>
     <script type='text/template' id="image_template">
     <% _.forEach(images, function(image){ %>
         <tr id="<%- image.id %>">
@@ -143,6 +146,38 @@
             </div>
         </div>
     </script>
+    <script type='text/template' id="inspectImageTempalte">
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">ID</label>
+            <div class="col-sm-8 well well-sm">
+                <%- Id %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Author</label>
+            <div class="col-sm-8 well well-sm">
+                <%- Author %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">OS</label>
+            <div class="col-sm-8 well well-sm">
+                <%- Os %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Architecture</label>
+            <div class="col-sm-8 well well-sm">
+                <%- Architecture %>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">DockerVersion</label>
+            <div class="col-sm-8 well well-sm">
+                <%- DockerVersion %>
+            </div>
+        </div>
+    </script>
     
     <div class="modal fade" id="container_logs" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" style="width:90%">
@@ -184,6 +219,22 @@
                 </div>
                 <div class="modal-body">
                     <div id="inspect_ouput" class="form-horizontal"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="inspect_image" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="log_controls modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Inspect Image</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="inspect_image_ouput" class="form-horizontal"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

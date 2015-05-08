@@ -129,6 +129,9 @@ sub _build_router {
 	resource '/dockerapi/images' => sub {
 	    GET { $self->get_images(@_) };
 	};
+	resource '/dockerapi/image/{image_name}' => sub {
+	    GET { $self->inspect_image(@_) };
+	};
     } auto_options => 1;
     return $router;
 }
@@ -195,6 +198,20 @@ sub get_container_logs {
     my $response = $self->http_object->get('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/logs?stderr=1&tail='.$tail);
     my $res = Plack::Response->new($response->{status});
     $res->content_type('text/plain');
+    print STDERR Dumper($response)."\n";
+    $res->body($response->{content});
+    return $res->finalize;
+}
+
+sub inspect_image {
+    my($self, $env, $uri_params) = @_;
+    print STDERR "In inspect image command\n";
+    my $req = Plack::Request->new($env);
+    my $tail = $req->param('tail');
+    $uri_params->{image_name}=~s/_/\//g;
+    my $response = $self->http_object->get('http:/var/run/docker.sock//images/'.$uri_params->{image_name}.'/json');
+    my $res = Plack::Response->new($response->{status});
+    $res->content_type('application/json');
     print STDERR Dumper($response)."\n";
     $res->body($response->{content});
     return $res->finalize;

@@ -31,8 +31,8 @@
     <div class="tabbable-panel">
         <div class="tabbable-line">
             <ul class="nav nav-tabs" id="pageNavList">
-                <li class="active" ><a id="showContainers" href="#container_tab" data-toggle="tab">Containers</a></li>
-                <li><a href="#image_tab" id="showImages" data-toggle="tab">Images</a></li>
+                <li class="active" ><a id="showContainers" href="#container_tab" data-toggle="tab" aria-controls="home" role="tab" >Containers</a></li>
+                <li><a href="#image_tab" id="showImages" data-toggle="tab" aria-controls="home" role="tab">Images</a></li>
             </ul>
             <div class='tab-content' id="main-content-tabs">
                 <div id="container_tab" class="tab-pane active container-fluid status" >
@@ -41,7 +41,8 @@
                             
                         </tbody>
                     </table>
-                    <div id="image_tab" class="tab-pane container-fluid status" style="max-height:600px">
+                </div>
+                <div id="image_tab" class="tab-pane container-fluid status" style="max-height:600px">
                     <table id="image_table" class="table table-bordred table-striped table-hover">
                         <tbody id="image_list">
                             
@@ -144,7 +145,7 @@
     </script>
     
     <div class="modal fade" id="container_logs" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg" style="width:90%">
             <div class="modal-content">
                 <div class="log_controls modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

@@ -110,6 +110,13 @@ $(document).ready(function(){
 			    },
 			    complete: function(xhr, status){
 				    console.log(status);
+			    },
+			    error: function(xhr, status, message){
+				swal({
+				    title: "Ohh's No!",
+				    text: xhr.responseText,
+				    type: "error",
+				  });
 			    }
 		    });
 		},
@@ -127,6 +134,13 @@ $(document).ready(function(){
 			    },
 			    complete: function(xhr, status){
 				    console.log(status);
+			    },
+			    error: function(xhr, status, message){
+				swal({
+				    title: "Ohh's No!",
+				    text: xhr.responseText,
+				    type: "error",
+				  });
 			    }
 		    });
 		},
@@ -144,6 +158,13 @@ $(document).ready(function(){
 			    },
 			    complete: function(xhr, status){
 				    console.log(status);
+			    },
+			    error: function(xhr, status, message){
+				swal({
+				    title: "Ohh's No!",
+				    text: xhr.responseText,
+				    type: "error",
+				  });
 			    }
 		    });
 		},
@@ -160,6 +181,13 @@ $(document).ready(function(){
 			    },
 			    complete: function(xhr, status){
 				    console.log(status);
+			    },
+			    error: function(xhr, status, message){
+				swal({
+				    title: "Ohh's No!",
+				    text: xhr.responseText,
+				    type: "error",
+				  });
 			    }
 		    });
 		},
@@ -176,6 +204,13 @@ $(document).ready(function(){
 			    },
 			    complete: function(xhr, status){
 				    console.log(status);
+			    },
+			    error: function(xhr, status, message){
+				swal({
+				    title: "Ohh's No!",
+				    text: xhr.responseText,
+				    type: "error",
+				  });
 			    }
 		    });
 		},
@@ -202,6 +237,13 @@ $(document).ready(function(){
 			    },
 			    complete: function(xhr, status){
 				    console.log(status);
+			    },
+			    error: function(xhr, status, message){
+				swal({
+				    title: "Ohh's No!",
+				    text: xhr.responseText,
+				    type: "error",
+				  });
 			    }
 		    });
 		},
@@ -215,11 +257,11 @@ $(document).ready(function(){
 			docker.openWebSocket.onmessage = function (event) {
 				var data = JSON.parse(event.data);
 				_.forEach(_.trim(data.data).split(/\n/), function(line){
-					$("#logs_output").prepend("<li>"+line+"</li>");
+					$("#logs_output").append("<li>"+line+"</li>");
 				});
 				var max_lines = $("#log_lines").val()
 				while($("#logs_output li").size() > max_lines){
-					$("#logs_output li:last").remove();
+					$("#logs_output li:first").remove();
 				}
 			}
 		},
@@ -246,6 +288,13 @@ $(document).ready(function(){
 				},
 				complete: function(xhr, status){
 					console.log(status);
+				},
+				error: function(xhr, status, message){
+				    swal({
+					title: "Ohh's No!",
+					text: xhr.responseText,
+					type: "error",
+				      });
 				}
 			});
 		},
@@ -262,6 +311,13 @@ $(document).ready(function(){
 				},
 				complete: function(xhr, status){
 					console.log(status);
+				},
+				error: function(xhr, status, message){
+				    swal({
+					title: "Ohh's No!",
+					text: xhr.responseText,
+					type: "error",
+				  });
 				}
 			});
 		}

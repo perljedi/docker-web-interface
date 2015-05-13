@@ -323,6 +323,11 @@ $(document).ready(function(){
 				}
 			});
 		},
+		showContainerRename: function(event){
+			var id = $(event.relatedTarget).data('container');
+			$("#rename_container_id").val(id);
+			$("#newName").val(docker.containerDatatable.row($(event.relatedTarget).closest("tr[role=row]")).data().Names[0]);
+		},
 		inspectImage: function(event){
 			var id = $(event.relatedTarget).data('image');
 			$.ajax({
@@ -333,6 +338,28 @@ $(document).ready(function(){
 					console.log(res);
 					var template = _.template($("#inspectImageTempalte").html());
 					$("#inspect_image_ouput").html(template(res));
+				},
+				complete: function(xhr, status){
+					console.log(status);
+				},
+				error: function(xhr, status, message){
+				    swal({
+					title: "Ohh's No!",
+					text: xhr.responseText,
+					type: "error",
+				  });
+				}
+			});
+		},
+		renameContainer: function(){
+			var id = $("#rename_container_id").val();
+			var name = $("#newName").val();
+			$.ajax({
+				type: "PUT",
+				url:"/dockerapi/container/"+id,
+				data: {name:name},
+				success: function(res){
+					docker.reloadContainers();
 				},
 				complete: function(xhr, status){
 					console.log(status);
@@ -360,10 +387,12 @@ $(document).ready(function(){
 	$("#inspect_container").on("show.bs.modal", docker.inspectContainer);
 	$("#inspect_image").on("show.bs.modal", docker.inspectImage);
 	$("#container_top").on("show.bs.modal", docker.containerTopProcesses);
+	$("#container_rename").on("show.bs.modal", docker.showContainerRename);
 	$(document).on("click", ".reloadContainers", docker.reloadContainers);
 	$("#showAllContainers").on("change", docker.toggleAllContainers);
 	$("#showContainers").on("show.bs.tab", function(){docker.reloadContainers();});
 	$("#showImages").on("show.bs.tab", function(){docker.showImageTab();});
+	$("#doRenameContainer").on("click", docker.renameContainer);
 });
 
 

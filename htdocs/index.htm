@@ -77,6 +77,11 @@
                                 <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Top
                             </a>
                         </li>
+                        <li>
+                            <a role="menuitem" data-container="<%- container.Id %>" data-toggle="modal" data-target="#container_rename">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Rename
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 
@@ -325,6 +330,27 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="container_rename" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="log_controls modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Rename Container</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="newName" class="col-sm-2 control-label">Name</label>
+                        <input id="newName" type="text" class="form-control" />
+                    </div>
+                    <input type="hidden" id="rename_container_id" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal" id="doRenameContainer">Save</button>
                 </div>
             </div>
         </div>

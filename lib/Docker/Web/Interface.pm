@@ -104,6 +104,7 @@ sub _build_router {
 	resource '/dockerapi/container/{container_id}' => sub {
 	    DELETE { $self->delete_container(@_); };
 	    GET { $self->inspect_container(@_); };
+	    PUT { $self->renameContainer(@_); };
 	};
 	resource '/dockerapi/container/{container_id}/top' => sub {
 	    GET { $self->get_container_top_processes(@_); };
@@ -185,6 +186,16 @@ sub list_containers {
 sub start_container {
     my($self, $env, $uri_params) = @_;
     my $response = $self->http_object->post('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/start');
+    my $res = Plack::Response->new($response->{status});
+    $res->content_type('application/json');
+    $res->body($response->{content});
+    return $res->finalize;
+}
+
+sub renameContainer {
+    my($self, $env, $uri_params) = @_;
+    my $req = Plack::Request->new($env);
+    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/rename?name='.$req->param('name'));
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});

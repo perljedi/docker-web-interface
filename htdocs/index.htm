@@ -255,12 +255,12 @@
         </div>
     </script>
     <script type="text/template" id="export_ports_template">
-        <div class="input-group input-group-option">
-                <input type="text" name="cp<%- n %>" class="form-control" placeholder="container port">
+        <div class="input-group input-group-option exported-port-group">
+                <input type="text" name="cp<%- n %>" class="form-control export-container-port" placeholder="container port">
                 <span class="input-group-addon input-group-addon-seperator">
                         :
                 </span>
-                <input type="text" name="hp<%- n %>" class="form-control" placeholder="host port">
+                <input type="text" name="hp<%- n %>" class="form-control export-host-port" placeholder="host port">
                 <span class="input-group-addon input-group-addon-remove remove-host-port">
                         <span class="glyphicon glyphicon-remove"></span>
                 </span>
@@ -268,24 +268,24 @@
     </script>
     
     <script type="text/template" id="add_env_var_template">
-        <div class="input-group input-group-option">
-                <input type="text" name="env_varname<%- n %>" class="form-control" placeholder="variable">
+        <div class="input-group input-group-option env-var-group">
+                <input type="text" name="env_varname<%- n %>" class="form-control env-var-name" placeholder="variable">
                 <span class="input-group-addon input-group-addon-seperator">
                     =
                 </span>
-                <input type="text" name="env_varvalue<%- n %>" class="form-control" placeholder="value">
+                <input type="text" name="env_varvalue<%- n %>" class="form-control env-var-value" placeholder="value">
                 <span class="input-group-addon input-group-addon-remove remove-env-var">
                         <span class="glyphicon glyphicon-remove"></span>
                 </span>
         </div>
     </script>
     <script type="text/template" id="add_mount_template">
-        <div class="input-group input-group-option">
-                <input type="text" name="host_director<%- n %>" class="form-control" placeholder="host directory">
+        <div class="input-group input-group-option mount-point-group">
+                <input type="text" name="host_director<%- n %>" class="form-control host-directory-mount" placeholder="host directory">
                 <span class="input-group-addon input-group-addon-seperator">
                     @
                 </span>
-                <input type="text" name="container_path<%- n %>" class="form-control" placeholder="container path">
+                <input type="text" name="container_path<%- n %>" class="form-control container-mount-target" placeholder="container path">
                 <span class="input-group-addon input-group-addon-remove remove-mount">
                         <span class="glyphicon glyphicon-remove"></span>
                 </span>
@@ -402,13 +402,13 @@
                 <div class="modal-body">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="container_name" class="col-sm-2 control-label">Name</label>
+                            <label for="container_name" class="col-sm-3 control-label">Name</label>
                             <div class="col-sm-8">
                                 <input id="container_name" name="container_name" type="text" class="form-control" placeholder="flying_monkey"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="image_name" class="col-sm-2 control-label">Image</label>
+                            <label for="image_name" class="col-sm-3 control-label">Image</label>
                             <div class="col-sm-5">
                                 <input id="image_name" name="image_name" type="text" class="form-control"  placeholder="image name" />
                             </div>
@@ -417,58 +417,28 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="command" class="col-sm-2 control-label">Command</label>
+                            <label for="command" class="col-sm-3 control-label">Command</label>
                             <div class="col-sm-8">
                                 <input id="command" name="command" type="text" class="form-control" placeholder="/bin/bash" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="ports" class="col-sm-2 control-label">Exported Ports</label>
+                            <label for="ports" class="col-sm-3 control-label">Exported Ports</label>
                             <div class="col-sm-8" id="create_export_ports">
-                                <div class="input-group input-group-option">
-                                        <input type="text" name="cp1" class="form-control" placeholder="container port">
-                                        <span class="input-group-addon input-group-addon-seperator">
-                                                :
-                                        </span>
-                                        <input type="text" name="hp1" class="form-control" placeholder="host port">
-                                        <span class="input-group-addon input-group-addon-remove remove-host-port">
-                                                <span class="glyphicon glyphicon-remove"></span>
-                                        </span>
-                                </div>
                                 <button type="button" class="btn btn-default" id="add_export_port"><span class="glyphicon glyphicon-plus"></span></button>
                                 <input type="hidden" id="exported_port_count" value=1 />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="ports" class="col-sm-2 control-label">Environment Variables</label>
+                            <label for="ports" class="col-sm-3 control-label">Environment Variables</label>
                             <div class="col-sm-8" id="create_env_variables">
-                                <div class="input-group input-group-option">
-                                        <input type="text" name="env_varname1" class="form-control" placeholder="variable">
-                                        <span class="input-group-addon input-group-addon-seperator">
-                                            =
-                                        </span>
-                                        <input type="text" name="env_varvalue1" class="form-control" placeholder="value">
-                                        <span class="input-group-addon input-group-addon-remove remove-env-var">
-                                                <span class="glyphicon glyphicon-remove"></span>
-                                        </span>
-                                </div>
                                 <button type="button" class="btn btn-default" id="add_env_var"><span class="glyphicon glyphicon-plus"></span></button>
                                 <input type="hidden" id="env_var_count" value=1 />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="ports" class="col-sm-2 control-label">Filesystem Mounts</label>
+                            <label for="ports" class="col-sm-3 control-label">Filesystem Mounts</label>
                             <div class="col-sm-8" id="container_mount_points">
-                                <div class="input-group input-group-option">
-                                        <input type="text" name="host_director1" class="form-control" placeholder="host directory">
-                                        <span class="input-group-addon input-group-addon-seperator">
-                                            @
-                                        </span>
-                                        <input type="text" name="container_path1" class="form-control" placeholder="container path">
-                                        <span class="input-group-addon input-group-addon-remove remove-mount">
-                                                <span class="glyphicon glyphicon-remove"></span>
-                                        </span>
-                                </div>
                                 <button type="button" class="btn btn-default" id="add_mount_point"><span class="glyphicon glyphicon-plus"></span></button>
                                 <input type="hidden" id="mount_count" value=1 />
                             </div>

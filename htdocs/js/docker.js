@@ -421,6 +421,14 @@ $(document).ready(function(){
 	$(document).on("click", ".remove-mount", function(){
 		$(this).closest(".input-group").remove();
 	});
+	$("#container_create").on("show.bs.modal", function(){
+		$(".exported-port-group").remove();
+		$(".env-var-group").remove();
+		$(".mount-point-group").remove();
+		$("#env_var_count").val(1);
+		$("#exported_port_count").val(1);
+		$("#mount_count").val(1);
+	});
 });
 
 

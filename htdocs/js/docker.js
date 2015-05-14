@@ -35,14 +35,15 @@ $(document).ready(function(){
 				    {data:{"_":"Created"}, "title":"Created"},
 			    ],
 			    "pageLength": 25,
-			    "dom":"<'row'<'col-sm-1'l><'col-sm-2'<'#filterOption'>><'col-sm-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-3'i><'col-sm-3'<'#refreshButton'>><'col-sm-6'p>>",
+			    "dom":"<'row'<'col-sm-1'l><'col-sm-2'<'#filterOption'>><'col-sm-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-3'i><'col-sm-4'<'#refreshButton'><'#createButton'>><'col-sm-5'p>>",
 			    "order":[],
 			    "scrollY": (dh - $ct.offset().top - 180)+"px",
 			    "scrollCollapse": true,
 			    //data:res
 		    });
 		    $("#filterOption").html('<div class="form-horizontal funkyradio"><div class="funkyradio-default"><input type="checkbox" name="checkbox" id="showAllContainers" checked/><label for="showAllContainers">Show All</label></div></div>')
-		    $("#refreshButton").html('<button class="btn btn-default btn-lg reloadContainers"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh</button>')
+		    $("#refreshButton").html('<button class="btn btn-default btn-lg reloadContainers pull-left"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh</button>')
+		    $("#createButton").html('<button class="btn btn-default btn-lg createContainer pull-right" data-toggle="modal" data-target="#container_create"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>New</button>')
 		    docker.containerDatatable = table.api();
 		    //docker.containerTable = new $.fn.dataTable.Api( "#container_table" );
 		},
@@ -393,6 +394,33 @@ $(document).ready(function(){
 	$("#showContainers").on("show.bs.tab", function(){docker.reloadContainers();});
 	$("#showImages").on("show.bs.tab", function(){docker.showImageTab();});
 	$("#doRenameContainer").on("click", docker.renameContainer);
+	$("#add_export_port").on("click", function(){
+		var template = _.template($("#export_ports_template").html());
+		var count = $("#exported_port_count").val()
+		$(this).before(template({n: count}));
+		$("#exported_port_count").val(count+1);
+	});
+	$(document).on("click", ".remove-host-port", function(){
+		$(this).closest(".input-group").remove();
+	});
+	$("#add_env_var").on("click", function(){
+		var template = _.template($("#add_env_var_template").html());
+		var count = $("#env_var_count").val()
+		$(this).before(template({n: count}));
+		$("#env_var_count").val(count+1);
+	});
+	$(document).on("click", ".remove-env-var", function(){
+		$(this).closest(".input-group").remove();
+	});
+	$("#add_mount_point").on("click", function(){
+		var template = _.template($("#add_mount_template").html());
+		var count = $("#mount_count").val()
+		$(this).before(template({n: count}));
+		$("#mount_count").val(count+1);
+	});
+	$(document).on("click", ".remove-mount", function(){
+		$(this).closest(".input-group").remove();
+	});
 });
 
 

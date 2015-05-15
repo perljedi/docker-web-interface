@@ -49,6 +49,13 @@ has open_streams => (
     default => sub {return {}; },
 );
 
+has base_url => (
+    is       => 'ro',
+    isa      => 'Str',
+    lazy     => 1,
+    default  => 'http:/var/run/docker.sock//'
+);
+
 has 'json' => (
     is       => 'ro',
     isa      => 'JSON',
@@ -187,11 +194,11 @@ sub new_container {
 	Image=>$decoded->{image_name}.':'.$decoded->{image_version},
 	Cmd=>[split(/\s+/, $decoded->{command})]
     };
-    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/create?name=%2F'.$name, {headers=>{'content-type'=>'application/json'}, content=>$self->json->encode($container_params)});
+    my $response = $self->http_object->post($self->base_url.'containers/create?name=%2F'.$name, {headers=>{'content-type'=>'application/json'}, content=>$self->json->encode($container_params)});
     print Dumper($response)."\n";
     if ($response->{status} > 199 && $response->{status} < 300) {
 	my($res) = $self->json->decode($response->{content});
-	my $r2 = $self->http_object->post('http:/var/run/docker.sock//containers/'.$res->{Id}.'/start');
+	my $r2 = $self->http_object->post($self->base_url.'containers/'.$res->{Id}.'/start');
     }
     
     my $res = Plack::Response->new(200);
@@ -202,7 +209,7 @@ sub new_container {
 
 sub list_containers {
     my($self, $env) = @_;
-    my $response = $self->http_object->get('http:/var/run/docker.sock//containers/json');
+    my $response = $self->http_object->get($self->base_url.'containers/json');
     my $res = Plack::Response->new(200);
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -211,7 +218,7 @@ sub list_containers {
 
 sub start_container {
     my($self, $env, $uri_params) = @_;
-    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/start');
+    my $response = $self->http_object->post($self->base_url.'containers/'.$uri_params->{container_id}.'/start');
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -221,7 +228,7 @@ sub start_container {
 sub renameContainer {
     my($self, $env, $uri_params) = @_;
     my $req = Plack::Request->new($env);
-    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/rename?name='.$req->param('name'));
+    my $response = $self->http_object->post($self->base_url.'containers/'.$uri_params->{container_id}.'/rename?name='.$req->param('name'));
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -232,7 +239,7 @@ sub get_container_logs {
     my($self, $env, $uri_params) = @_;
     my $req = Plack::Request->new($env);
     my $tail = $req->param('tail');
-    my $response = $self->http_object->get('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/logs?stderr=1&tail='.$tail);
+    my $response = $self->http_object->get($self->base_url.'containers/'.$uri_params->{container_id}.'/logs?stderr=1&tail='.$tail);
     my $res = Plack::Response->new($response->{status});
     $res->content_type('text/plain');
     print STDERR Dumper($response)."\n";
@@ -246,7 +253,7 @@ sub inspect_image {
     my $req = Plack::Request->new($env);
     my $tail = $req->param('tail');
     $uri_params->{image_name}=~s/_/\//g;
-    my $response = $self->http_object->get('http:/var/run/docker.sock//images/'.$uri_params->{image_name}.'/json');
+    my $response = $self->http_object->get($self->base_url.'images/'.$uri_params->{image_name}.'/json');
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     print STDERR Dumper($response)."\n";
@@ -324,7 +331,7 @@ sub follow_container_logs {
 
 sub delete_container {
     my($self, $env, $uri_params) = @_;
-    my $response = $self->http_object->delete('http:/var/run/docker.sock//containers/'.$uri_params->{container_id});
+    my $response = $self->http_object->delete($self->base_url.'containers/'.$uri_params->{container_id});
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -333,7 +340,7 @@ sub delete_container {
 
 sub inspect_container {
     my($self, $env, $uri_params) = @_;
-    my $response = $self->http_object->get('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/json');
+    my $response = $self->http_object->get($self->base_url.'containers/'.$uri_params->{container_id}.'/json');
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -342,7 +349,7 @@ sub inspect_container {
 
 sub get_container_top_processes {
     my($self, $env, $uri_params) = @_;
-    my $response = $self->http_object->get('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/top');
+    my $response = $self->http_object->get($self->base_url.'containers/'.$uri_params->{container_id}.'/top');
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -351,7 +358,7 @@ sub get_container_top_processes {
 
 sub pause_container {
     my($self, $env, $uri_params) = @_;
-    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/pause');
+    my $response = $self->http_object->post($self->base_url.'containers/'.$uri_params->{container_id}.'/pause');
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -360,7 +367,7 @@ sub pause_container {
 
 sub resume_container {
     my($self, $env, $uri_params) = @_;
-    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/unpause');
+    my $response = $self->http_object->post($self->base_url.'containers/'.$uri_params->{container_id}.'/unpause');
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -369,7 +376,7 @@ sub resume_container {
 
 sub stop_container {
     my($self, $env, $uri_params) = @_;
-    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/stop');
+    my $response = $self->http_object->post($self->base_url.'containers/'.$uri_params->{container_id}.'/stop');
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -378,7 +385,7 @@ sub stop_container {
 
 sub restart_container {
     my($self, $env, $uri_params) = @_;
-    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/'.$uri_params->{container_id}.'/restart');
+    my $response = $self->http_object->post($self->base_url.'containers/'.$uri_params->{container_id}.'/restart');
     my $res = Plack::Response->new($response->{status});
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -387,7 +394,7 @@ sub restart_container {
 
 sub get_all_containers {
     my($self, $env) = @_;
-    my $response = $self->http_object->get('http:/var/run/docker.sock//containers/json?all=1');
+    my $response = $self->http_object->get($self->base_url.'containers/json?all=1');
     my $res = Plack::Response->new(200);
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -396,7 +403,7 @@ sub get_all_containers {
 
 sub get_system_info {
     my($self, $env) = @_;
-    my $response = $self->http_object->get('http:/var/run/docker.sock//info');
+    my $response = $self->http_object->get($self->base_url.'info');
     my $res = Plack::Response->new(200);
     $res->content_type('application/json');
     $res->body($response->{content});
@@ -405,7 +412,7 @@ sub get_system_info {
 
 sub get_images {
     my($self, $env) = @_;
-    my $response = $self->http_object->get('http:/var/run/docker.sock//images/json');
+    my $response = $self->http_object->get($self->base_url.'images/json');
     my $res = Plack::Response->new(200);
     $res->content_type('application/json');
     $res->body($response->{content});

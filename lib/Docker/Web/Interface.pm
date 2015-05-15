@@ -12,6 +12,7 @@ use Data::Dumper;
 use AnyEvent::Socket;
 use AnyEvent::Handle;
 use AnyEvent::WebSocket::Server;
+use Plack::App::File;
 use JSON;
 
 has 'http_object' => (
@@ -91,13 +92,18 @@ sub app {
 	};
         enable "Plack::Middleware::Static",
             path => qr{^(?:/(images|js|css|fonts)/|/?index.htm)}, root => './htdocs/';
-        sub {  $router->dispatch(shift) };
+        sub {
+	    $router->dispatch(shift)
+	};
     }    
 }
 
 sub _build_router {
     my $self = shift;
     my $router = router {
+	resource '/' => sub {
+	    GET { Plack::App::File->new(file => 'htdocs/index.htm')->to_app->(@_); };
+	};
 	resource '/dockerapi/containers' => sub {
 	    GET  { $self->list_containers(@_); };
 	    POST { $self->new_container(@_); };

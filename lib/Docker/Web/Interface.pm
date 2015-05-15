@@ -198,8 +198,32 @@ sub new_container {
     my($name) = delete $decoded->{name};
     my $container_params = {
 	Image=>$decoded->{image_name}.':'.$decoded->{image_version},
-	Cmd=>[split(/\s+/, $decoded->{command})]
+	Cmd=>[split(/\s+/, $decoded->{command})],
+	HostConfig => {
+	    PortBindings => {},
+	    Binds => [],
+	},
+	ExposedPorts => {},
+	Env=>[]
     };
+    if (exists $decoded->{exported_ports} && scalar(@{ $decoded->{exported_ports} }) > 0) {
+	foreach my $binding (@{ $decoded->{exported_ports} }){
+	    #$container_params->{ExposedPorts}{$binding->{container_port}} = {};
+	    $container_params->{HostConfig}{PortBindings}{ $binding->{container_port} } = [{ HostPort => $binding->{host_port} }];
+	}
+    }
+
+    if (exists $decoded->{mounts} && scalar(@{ $decoded->{mounts} }) > 0) {
+	foreach my $binding (@{ $decoded->{mounts} }){
+	    push @{ $container_params->{HostConfig}{Binds} }, $binding->{dir}.':'.$binding->{path};
+	}
+    }
+    if (exists $decoded->{mounts} && scalar(@{ $decoded->{mounts} }) > 0) {
+	foreach my $var (@{ $decoded->{environment} }){
+	    push @{ $container_params->{Env} }, $var->{name}.'='.$var->{value};
+	}
+    }
+    
     my $response = $self->http_object->post($self->base_url.'containers/create?name=%2F'.$name, {headers=>{'content-type'=>'application/json'}, content=>$self->json->encode($container_params)});
     print Dumper($response)."\n";
     if ($response->{status} > 199 && $response->{status} < 300) {
@@ -209,7 +233,7 @@ sub new_container {
     
     my $res = Plack::Response->new(200);
     $res->content_type('application/json');
-    $res->body($self->json->encode($decoded));
+    $res->body($self->json->encode($container_params));
     return $res->finalize;
 }
 

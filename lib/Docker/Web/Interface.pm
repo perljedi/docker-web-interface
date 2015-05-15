@@ -1,4 +1,6 @@
 package Docker::Web::Interface;
+# ABSTRACT: Perl Glue tying the web interface to the docker backend
+
 use Moose;
 use Plack::Builder;
 use Router::Resource;
@@ -90,7 +92,8 @@ sub _build_router {
     my $self = shift;
     my $router = router {
 	resource '/dockerapi/containers' => sub {
-	    GET { $self->list_containers(@_); };
+	    GET  { $self->list_containers(@_); };
+	    POST { $self->new_container(@_); };
 	};
 	resource '/dockerapi/container/{container_id}/start' => sub {
 	    POST { $self->start_container(@_); };
@@ -172,6 +175,29 @@ sub _start_websocket {
 	    });
 	});
     }));
+}
+
+sub new_container {
+    my($self, $env) = @_;
+    my $req = Plack::Request->new($env);
+    print STDERR "Content:\n".$req->content."\n";
+    my($decoded) = $self->json->decode($req->content);
+    my($name) = delete $decoded->{name};
+    my $container_params = {
+	Image=>$decoded->{image_name}.':'.$decoded->{image_version},
+	Cmd=>[split(/\s+/, $decoded->{command})]
+    };
+    my $response = $self->http_object->post('http:/var/run/docker.sock//containers/create?name=%2F'.$name, {headers=>{'content-type'=>'application/json'}, content=>$self->json->encode($container_params)});
+    print Dumper($response)."\n";
+    if ($response->{status} > 199 && $response->{status} < 300) {
+	my($res) = $self->json->decode($response->{content});
+	my $r2 = $self->http_object->post('http:/var/run/docker.sock//containers/'.$res->{Id}.'/start');
+    }
+    
+    my $res = Plack::Response->new(200);
+    $res->content_type('application/json');
+    $res->body($self->json->encode($decoded));
+    return $res->finalize;
 }
 
 sub list_containers {

@@ -1,13 +1,13 @@
 
-FROM perl:5.20
+FROM perljedi/dzil_docker:latest
 MAINTAINER Dave Mueller <dave@perljedi.com>
 
 ADD . /opt/docker-web-interface
-RUN cpanm --quiet --notest --skip-satisfied Dist::Zilla
 WORKDIR /opt/docker-web-interface
-RUN dzil authordeps --missing | cpanm
+RUN cpanm --quiet --notest Twiggy
+RUN dzil authordeps --missing | cpanm --quiet --notest
 RUN dzil install
 
 EXPOSE 9999
 
-ENTRYPOINT ["twiggy --port 9999 -D"]
+CMD ["/bin/sh", "-c", "twiggy --port 9999 -D"]

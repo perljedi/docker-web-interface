@@ -88,6 +88,7 @@
     </script>
     <script type='text/template' id="image_buttons">
         <button class="btn btn-default btn-sm inspectImage" data-image="<%- image.Id %>" data-toggle="modal" data-target="#inspect_image"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></button>
+        <button class="btn btn-default btn-sm pullImage" data-image="<%- image.Id %>" data-toggle="modal" data-target="#inspect_image"><span class="glyphicon glyphicon-download" aria-hidden="true"></span></button>
     </script>
     <script type='text/template' id="image_template">
     <% _.forEach(images, function(image){ %>
@@ -409,11 +410,15 @@
                         </div>
                         <div class="form-group">
                             <label for="image_name" class="col-sm-3 control-label">Image</label>
-                            <div class="col-sm-5">
-                                <input id="image_name" name="image_name" type="text" class="form-control"  placeholder="image name" />
-                            </div>
-                            <div class="col-sm-3">
-                                <input id="image_version" name="image_version" type="text" class="form-control" placeholder="image version" />
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input id="image_name" name="image_name" type="text" class="form-control"  placeholder="image name" />
+                                    <span class="input-group-addon input-group-addon-seperator">/</span>
+                                    <input id="image_version" name="image_version" type="text" class="form-control" placeholder="image version" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" data-toggle="modal" data-target="#image_browse">Browse</button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -448,6 +453,23 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-default btn-primary" id="doStartContainer"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Run</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="modal fade" id="image_browse" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="log_controls modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Browse Images</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="image_btab" class="table table-bordred table-striped table-hover">
+                        <tbody id="image_select">
+                            
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

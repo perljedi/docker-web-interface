@@ -373,6 +373,22 @@ $(document).ready(function(){
 				  });
 				}
 			});
+		},
+		showImageBrowser: function(){
+		    var table = $("#image_btab").dataTable({
+			    "ajax":{url:"/dockerapi/images", "dataSrc": ""},
+			    "columnDefs":[
+				    {"targets":1, render:function(data, type, row, meta){return data.replace(/<none>/g, "none")}},
+				    {"targets":0, "orderable":false}
+			    ],
+			    "columns":[
+				    {data:null,render:function(data, type, row, meta){return "<button data-dismiss='modal' class='btn btn-default image-browse-select' data-value='"+row.RepoTags[0]+"'>select</button>"}, width:"25px", "title":""},
+				    {data:{"_":"RepoTags.0"}, "title":"Name"},
+			    ],
+			    scrollY: "200px",
+			    "scrollCollapse": true,
+			    "order":[]
+		    });
 		}
 	});
 	docker.getContainers();
@@ -389,6 +405,7 @@ $(document).ready(function(){
 	$("#inspect_image").on("show.bs.modal", docker.inspectImage);
 	$("#container_top").on("show.bs.modal", docker.containerTopProcesses);
 	$("#container_rename").on("show.bs.modal", docker.showContainerRename);
+	$("#image_browse").on("show.bs.modal", docker.showImageBrowser);
 	$(document).on("click", ".reloadContainers", docker.reloadContainers);
 	$("#showAllContainers").on("change", docker.toggleAllContainers);
 	$("#showContainers").on("show.bs.tab", function(){docker.reloadContainers();});
@@ -412,6 +429,12 @@ $(document).ready(function(){
 	$(document).on("click", ".remove-env-var", function(){
 		$(this).closest(".input-group").remove();
 	});
+	$(document).on("click", ".image-browse-select", function(){
+		var nmstr = $(this).data("value");
+		var img = nmstr.split(/:/);
+		$("#image_name").val(img[0]);
+		$("#image_version").val(img[1]);
+	});
 	$("#add_mount_point").on("click", function(){
 		var template = _.template($("#add_mount_template").html());
 		var count = $("#mount_count").val()
@@ -429,6 +452,7 @@ $(document).ready(function(){
 		$("#exported_port_count").val(1);
 		$("#mount_count").val(1);
 	});
+	
 	$("#doStartContainer").on("click", function(){
 		var options = {
 			name           : $("#container_name").val(),

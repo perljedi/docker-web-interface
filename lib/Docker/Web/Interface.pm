@@ -225,10 +225,16 @@ sub new_container {
     }
     
     my $response = $self->http_object->post($self->base_url.'containers/create?name=%2F'.$name, {headers=>{'content-type'=>'application/json'}, content=>$self->json->encode($container_params)});
-    print Dumper($response)."\n";
+    if ($response->{status} == 404) {
+	my $getResponse = $self->http_object->post($self->base_url.'images/create?fromImage='.$decoded->{image_name}.'&tag='.$decoded->{image_version}, {headers=>{'content-type'=>'application/json'}});#, content=>$self->json->encode({repo=>$decoded->{image_name}, tag=>$decoded->{image_version}})});
+	$response = $self->http_object->post($self->base_url.'containers/create?name=%2F'.$name, {headers=>{'content-type'=>'application/json'}, content=>$self->json->encode($container_params)});
+    }
+    
     if ($response->{status} > 199 && $response->{status} < 300) {
-	my($res) = $self->json->decode($response->{content});
-	my $r2 = $self->http_object->post($self->base_url.'containers/'.$res->{Id}.'/start');
+	if ($decoded->{runContainer}) {
+	    my($res) = $self->json->decode($response->{content});
+	    my $r2 = $self->http_object->post($self->base_url.'containers/'.$res->{Id}.'/start');
+	}
     }
     
     my $res = Plack::Response->new(200);

@@ -389,6 +389,57 @@ $(document).ready(function(){
 			    "scrollCollapse": true,
 			    "order":[]
 		    });
+		},
+		createContainer: function(){
+			var options = {
+				name           : $("#container_name").val(),
+				command        : $("#command").val(),
+				image_name     : $("#image_name").val(),
+				image_version  : $("#image_version").val(),
+				exported_ports : [],
+				environment    : [],
+				mounts         : [],
+				runContainer   : $("#runNewContainer").is(":checked"),
+				destroyOnClose : $("#destroyOnClose").is(":checked"),
+			};
+			$(".exported-port-group").each(function(group){
+				options.exported_ports.push({
+					container_port: $(this).find(".export-container-port").val(),
+					host_port: $(this).find(".export-host-port").val()
+				});
+			});
+			$(".env-var-group").each(function(group){
+				options.environment.push({
+					name: $(this).find(".env-var-name").val(),
+					value: $(this).find(".env-var-value").val()
+				});
+			});
+			$(".mount-point-group").each(function(group){
+				options.mounts.push({
+					dir: $(this).find(".host-directory-mount").val(),
+					path: $(this).find(".container-mount-target").val()
+				});
+			});
+			$.ajax({
+				type: "POST",
+				url:"/dockerapi/containers",
+				data: JSON.stringify(options),
+				contentType: 'application/json',
+				success: function(res){
+					$("#container_create").modal("hide");
+					docker.reloadContainers();
+				},
+				complete: function(xhr, status){
+					console.log(status);
+				},
+				error: function(xhr, status, message){
+				    swal({
+					title: "Ohh's No!",
+					text: xhr.responseText,
+					type: "error",
+				  });
+				}
+			});
 		}
 	});
 	docker.getContainers();
@@ -452,56 +503,10 @@ $(document).ready(function(){
 		$("#exported_port_count").val(1);
 		$("#mount_count").val(1);
 	});
-	
-	$("#doStartContainer").on("click", function(){
-		var options = {
-			name           : $("#container_name").val(),
-			command        : $("#command").val(),
-			image_name     : $("#image_name").val(),
-			image_version  : $("#image_version").val(),
-			exported_ports : [],
-			environment    : [],
-			mounts         : []
-		};
-		$(".exported-port-group").each(function(group){
-			options.exported_ports.push({
-				container_port: $(this).find(".export-container-port").val(),
-				host_port: $(this).find(".export-host-port").val()
-			});
-		});
-		$(".env-var-group").each(function(group){
-			options.environment.push({
-				name: $(this).find(".env-var-name").val(),
-				value: $(this).find(".env-var-value").val()
-			});
-		});
-		$(".mount-point-group").each(function(group){
-			options.mounts.push({
-				dir: $(this).find(".host-directory-mount").val(),
-				path: $(this).find(".container-mount-target").val()
-			});
-		});
-		console.log(options);
-		$.ajax({
-			type: "POST",
-			url:"/dockerapi/containers",
-			data: JSON.stringify(options),
-			contentType: 'application/json',
-			success: function(res){
-				docker.reloadContainers();
-			},
-			complete: function(xhr, status){
-				console.log(status);
-			},
-			error: function(xhr, status, message){
-			    swal({
-				title: "Ohh's No!",
-				text: xhr.responseText,
-				type: "error",
-			  });
-			}
-		});
+	$("#runNewContainer").on("change", function(){
+		$($(this).data('target')).collapse('toggle');
 	});
+	$("#doStartContainer").on("click", docker.createContainer);
 });
 
 

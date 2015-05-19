@@ -448,6 +448,14 @@
                                 <input type="hidden" id="mount_count" value=1 />
                             </div>
                         </div>
+                        <div class="form-group">
+                            <div class="funkyradio col-sm-3 col-sm-offset-2">
+                                <div class="funkyradio-default"><input type="checkbox" name="checkbox" id="runNewContainer" data-target="#destroyOnCloseOption" /><label for="runNewContainer">Start Container</label></div>
+                            </div>
+                            <div class="funkyradio col-sm-3 collapse invisible" id="destroyOnCloseOption">
+                                <div class="funkyradio-default"><input type="checkbox" name="checkbox" id="destroyOnClose" /><label for="destroyOnClose">Destroy on Close</label></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -464,12 +472,39 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">Browse Images</h4>
                 </div>
-                <div class="modal-body">
-                    <table id="image_btab" class="table table-bordred table-striped table-hover">
-                        <tbody id="image_select">
-                            
-                        </tbody>
-                    </table>
+                <div class="modal-body tabbable-panel">
+                    <div class="tabbable-line">
+                        <ul class="nav nav-tabs" id="pageNavList">
+                            <li class="active" ><a href="#local-image-browse" data-toggle="tab" aria-controls="home" role="tab" >Local Images</a></li>
+                            <li><a href="#search-image-tab" data-toggle="tab" aria-controls="home" role="tab">Search Images</a></li>
+                        </ul>
+                        <div class='tab-content'>
+                            <div id="local-image-browse" class="tab-pane active container-fluid" >
+                                <table id="image_btab" class="table table-bordred table-striped table-hover">
+                                    <tbody id="image_select">
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane container-fluid" id="search-image-tab">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input id="search_term" name="search_term" type="text" class="form-control"  placeholder="term" />
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table id="image-search-results" class="table table-bordred table-striped table-hover">
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

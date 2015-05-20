@@ -144,7 +144,11 @@ sub _build_router {
 	    GET { $self->get_system_info(@_); };
 	};
 	resource '/dockerapi/images' => sub {
-	    GET { $self->get_images(@_) };
+	    GET  { $self->get_images(@_) };
+	    POST { $self->pull_image(@_) };
+	};
+	resource '/dockerapi/images/search' => sub {
+	    GET { $self->search_images(@_) };
 	};
 	resource '/dockerapi/image/{image_name}' => sub {
 	    GET { $self->inspect_image(@_) };
@@ -176,15 +180,15 @@ sub _start_websocket {
 		push @{ $self->socket_subscriptions->{$container_id} }, $con;
 	    });
 	    $connection->on(finish => sub {
-		    my $cons = $self->debug_connections;
-		    @$cons = grep { $_ != $connection } @$cons;
-		    foreach my $container_id (keys %{ $self->socket_subscriptions }){
-			$self->socket_subscriptions->{$container_id} = [grep { $_ != $connection } @{ $self->socket_subscriptions->{$container_id} }];
-			if (scalar(@ { $self->socket_subscriptions->{$container_id} }) < 1) {
-			    delete $self->open_streams->{$container_id};
-			}
+		my $cons = $self->debug_connections;
+		@$cons = grep { $_ != $connection } @$cons;
+		foreach my $container_id (keys %{ $self->socket_subscriptions }){
+		    $self->socket_subscriptions->{$container_id} = [grep { $_ != $connection } @{ $self->socket_subscriptions->{$container_id} }];
+		    if (scalar(@ { $self->socket_subscriptions->{$container_id} }) < 1) {
+			delete $self->open_streams->{$container_id};
 		    }
-		    undef $connection;
+		}
+		undef $connection;
 	    });
 	});
     }));
@@ -193,7 +197,6 @@ sub _start_websocket {
 sub new_container {
     my($self, $env) = @_;
     my $req = Plack::Request->new($env);
-    print STDERR "Content:\n".$req->content."\n";
     my($decoded) = $self->json->decode($req->content);
     my($name) = delete $decoded->{name};
     my $container_params = {
@@ -226,8 +229,8 @@ sub new_container {
     
     my $response = $self->http_object->post($self->base_url.'containers/create?name=%2F'.$name, {headers=>{'content-type'=>'application/json'}, content=>$self->json->encode($container_params)});
     if ($response->{status} == 404) {
-	my $getResponse = $self->http_object->post($self->base_url.'images/create?fromImage='.$decoded->{image_name}.'&tag='.$decoded->{image_version}, {headers=>{'content-type'=>'application/json'}});#, content=>$self->json->encode({repo=>$decoded->{image_name}, tag=>$decoded->{image_version}})});
-	$response = $self->http_object->post($self->base_url.'containers/create?name=%2F'.$name, {headers=>{'content-type'=>'application/json'}, content=>$self->json->encode($container_params)});
+	my $res = Plack::Response->new(404);
+	return $res->finalize;
     }
     
     if ($response->{status} > 199 && $response->{status} < 300) {
@@ -240,6 +243,19 @@ sub new_container {
     my $res = Plack::Response->new(200);
     $res->content_type('application/json');
     $res->body($self->json->encode($container_params));
+    return $res->finalize;
+}
+
+sub pull_image {
+    my($self, $env) = @_;
+    my $req = Plack::Request->new($env);
+    my($decoded) = $self->json->decode($req->content);
+    my $getResponse = $self->http_object->request(POST => $self->base_url.'images/create?fromImage='.$decoded->{image}.'&tag='.$decoded->{version},
+						  {headers=>{'content-type'=>'application/json'}, data_callback=>sub{print STDERR "got: ".$_[0]}});
+    print Dumper($getResponse)."\n";
+    my $res = Plack::Response->new(200);
+    $res->content_type('application/json');
+    $res->body($getResponse->{content});
     return $res->finalize;
 }
 
@@ -456,6 +472,6 @@ sub get_images {
 }
 
 sub _build_http_object {
-    return HTTP::Tiny::UNIX->new;
+    return HTTP::Tiny::UNIX->new(timeout=>300);
 }
 return 42;

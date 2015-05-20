@@ -18,6 +18,7 @@
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-select.min.css" />
     <script src="/js/lodash.min.js"></script>
     <script src="/js/docker.js"></script>
+    <script src="/js/loading_dialog.js"></script>
     <script src="/js/featherlight.js"></script>
     <script src="/js/gauge.js"></script>
     <script src="/js/d3.v3.min.js" charset="utf-8"></script>
@@ -466,7 +467,7 @@
         </div>
     </div>
         <div class="modal fade" id="image_browse" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="log_controls modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -492,13 +493,13 @@
                                         <div class="input-group">
                                             <input id="search_term" name="search_term" type="text" class="form-control"  placeholder="term" />
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</button>
+                                                <button class="btn btn-default" id="searchForImage"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</button>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                                 <table id="image-search-results" class="table table-bordred table-striped table-hover">
-                                    <tbody>
+                                    <tbody >
                                         
                                     </tbody>
                                 </table>

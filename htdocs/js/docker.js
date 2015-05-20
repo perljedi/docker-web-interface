@@ -385,12 +385,13 @@ $(document).ready(function(){
 				    {data:null,render:function(data, type, row, meta){return "<button data-dismiss='modal' class='btn btn-default image-browse-select' data-value='"+row.RepoTags[0]+"'>select</button>"}, width:"25px", "title":""},
 				    {data:{"_":"RepoTags.0"}, "title":"Name"},
 			    ],
-			    scrollY: "200px",
+			    scrollY: "400px",
 			    "scrollCollapse": true,
-			    "order":[]
+			    "order":[],
+			    destroy:true
 		    });
 		},
-		createContainer: function(){
+		buildCreateParameters: function(){
 			var options = {
 				name           : $("#container_name").val(),
 				command        : $("#command").val(),
@@ -420,6 +421,36 @@ $(document).ready(function(){
 					path: $(this).find(".container-mount-target").val()
 				});
 			});
+			return options;			
+		},
+		pullImage: function(iname, ivers, callback){
+			console.log("trying to fetch "+iname+":"+ivers);
+			waitingDialog.show('Pulling Image from Dockerhub');
+			$.ajax({
+				type: "POST",
+				url:"/dockerapi/images",
+				data: JSON.stringify({image:iname,version:ivers}),
+				contentType: 'application/json',
+				success: function(res){
+					callback();
+				},
+				complete: function(xhr, status){
+					waitingDialog.hide();
+				},
+				error: function(xhr, status, message){
+					swal({
+					    title: "Ohh's No!",
+					    text: xhr.responseText,
+					    type: "error",
+					});
+				}
+			});
+		},
+		createContainer: function(){
+			var options = docker.buildCreateParameters();
+			docker.doCreateContainer(options, true);
+		},
+		doCreateContainer: function(options, tryPull){
 			$.ajax({
 				type: "POST",
 				url:"/dockerapi/containers",
@@ -433,12 +464,48 @@ $(document).ready(function(){
 					console.log(status);
 				},
 				error: function(xhr, status, message){
-				    swal({
-					title: "Ohh's No!",
-					text: xhr.responseText,
-					type: "error",
-				  });
+					if (xhr.status == 404 && tryPull) {
+						docker.pullImage(options.image_name, options.image_version, function(){
+							docker.doCreateContainer(options, false);
+						});
+					}
+					else {
+						swal({
+						    title: "Ohh's No!",
+						    text: xhr.responseText,
+						    type: "error",
+						});
+					}
 				}
+			});
+		},
+		searchForImage: function(){
+			var table = $("#image-search-results").dataTable({
+				"ajax":{url:"/dockerapi/images/search?term="+$("#search_term").val(), "dataSrc": ""},
+				"columns":[
+					{data:null,render:function(data, type, row, meta){return "<button data-dismiss='modal' class='btn btn-default image-browse-select'>select</button>"}, width:"25px", "title":""},
+					{data:"name", "title":"Name"},
+					{data:"description", "title":"Description"},
+					{data:"star_count", "title":"Stars"},
+					{data:"is_official", "title":"Official", render:function(data, type, row, meta){ var val= "<span class='glyphicon glyphicon-";
+					    if (data) {
+						    val+="ok";
+					    }else{
+						    val+="remove";
+					    }
+					    val+="'></span>"; return val; }},
+					{data:"is_trusted", "title":"Trusted", render:function(data, type, row, meta){ var val= "<span class='glyphicon glyphicon-";
+					    if (data) {
+						    val+="ok";
+					    }else{
+						    val+="remove";
+					    }
+					    val+="'></span>"; return val; }},
+				],
+				scrollY: "400px",
+				"scrollCollapse": true,
+				"order":[],
+				destroy:true
 			});
 		}
 	});
@@ -507,6 +574,7 @@ $(document).ready(function(){
 		$($(this).data('target')).collapse('toggle');
 	});
 	$("#doStartContainer").on("click", docker.createContainer);
+	$("#searchForImage").on("click", docker.searchForImage);
 });
 
 

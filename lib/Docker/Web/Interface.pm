@@ -259,6 +259,17 @@ sub pull_image {
     return $res->finalize;
 }
 
+sub search_images {
+    my($self, $env) = @_;
+    my $req = Plack::Request->new($env);
+    my $getResponse = $self->http_object->request(GET => $self->base_url.'images/search?term='.$req->param('term'),
+						  {headers=>{'content-type'=>'application/json'}});
+    my $res = Plack::Response->new(200);
+    $res->content_type('application/json');
+    $res->body($getResponse->{content});
+    return $res->finalize;
+}
+
 sub list_containers {
     my($self, $env) = @_;
     my $response = $self->http_object->get($self->base_url.'containers/json');

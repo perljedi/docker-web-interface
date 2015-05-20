@@ -483,7 +483,7 @@ $(document).ready(function(){
 			var table = $("#image-search-results").dataTable({
 				"ajax":{url:"/dockerapi/images/search?term="+$("#search_term").val(), "dataSrc": ""},
 				"columns":[
-					{data:null,render:function(data, type, row, meta){return "<button data-dismiss='modal' class='btn btn-default image-browse-select'>select</button>"}, width:"25px", "title":""},
+					{data:null,render:function(data, type, row, meta){return "<button data-dismiss='modal' class='btn btn-default image-browse-select' data-value='"+row.name+"'>select</button>"}, width:"25px", "title":""},
 					{data:"name", "title":"Name"},
 					{data:"description", "title":"Description"},
 					{data:"star_count", "title":"Stars"},

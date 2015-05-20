@@ -252,10 +252,9 @@ sub pull_image {
     my($decoded) = $self->json->decode($req->content);
     my $getResponse = $self->http_object->request(POST => $self->base_url.'images/create?fromImage='.$decoded->{image}.'&tag='.$decoded->{version},
 						  {headers=>{'content-type'=>'application/json'}, data_callback=>sub{print STDERR "got: ".$_[0]}});
-    print Dumper($getResponse)."\n";
     my $res = Plack::Response->new(200);
     $res->content_type('application/json');
-    $res->body($getResponse->{content});
+    $res->body($self->json->encode({status=>'OK'}));
     return $res->finalize;
 }
 
